@@ -28,9 +28,12 @@ df_weather = df_weather[df_weather['date'].dt.year == 2023]
 #berlin = df_weather[df_weather['city_name'] == 'Berlin']
 #print(berlin)
 
-weather_keywords = ["weather", "temperature", "forecast"]
-restaurant_keywords = ["restaurant", "food", "cuisine"]
-transportation_keywords = ["tram", "bus", "transportation"]
+weather_keywords = ["weather", "temperature", "forecast", "season", "rain", "sun", "clouds", "wind", "humidity", "precipitation", "thunderstorm", "rainbow", "snow", \
+                    "Weather", "Temperature", "Forecast", "Season", "Rain", "Sun", "Clouds", "Wind", "Humidity", "Precipitation", "Thunderstorm", "Rainbow", "Snow"]
+restaurant_keywords = ["restaurant", "food", "cuisine", "meal", "dinner", "lunch", "breakfast", "dining", "eat", "drink", "menu", "dish", "snack", "taste", "flavour", "delicious", "yummy", "tasty", "hungry", "thirsty", \
+                        "Restaurant", "Food", "Cuisine", "Meal", "Dinner", "Lunch", "Breakfast", "Dining", "Eat", "Drink", "Menu", "Dish", "Snack", "Taste", "Flavour", "Delicious", "Yummy", "Tasty", "Hungry", "Thirsty"]
+transportation_keywords = ["tram", "bus", "transportation", "flight", "train", "car", "bicycle", "walk", "drive", "ride", "commute", "journey", "trip", "travel", "commute", "commuting", "commuter", "commuters", "transit", \
+                            "Tram", "Bus", "Transportation", "Flight", "Train", "Car", "Bicycle", "Walk", "Drive", "Ride", "Commute", "Journey", "Trip", "Travel", "Commute", "Commuting", "Commuter", "Commuters", "Transit"]
 
 affirmative_answers = ["yes", "yep", "yeah", "sure", "ok", "okay", "fine", "of course", "absolutely", "definitely", "indeed", "aye", "yea", "yah", "yahs", "yap", "yup", "ye", "yessir", "yes ma'am", "yessiree", "yessum", "yea", "yessuh"]
 negative_answers = ["no", "nope", "nah", "na", "nay", "nay", "nix", "naw", "nawp", "no way", "no siree", "no ma'am", "no sir"]
@@ -45,7 +48,7 @@ def search_keywords(phrase):
             print("Chatbot: Someone's hungry! Now that you mention it, I could go for a bite too... Anyway...")
             return "restaurant"
         elif keyword in transportation_keywords:
-            print("Chatbot: Transportation, huh? I'm not a big fan of buses, trains though... something about trains, I swear...")
+            print("Chatbot: Transportation, huh? I'm not a big fan of buses. Trains though... something about trains, I swear...")
             return "transportation"
     return "Chatbot: I'm sorry, I don't have an answer for that, can you try to be more specific with the terminology?"
 seasons = ['Spring', 'Summer', 'Autumn', 'Winter']
@@ -53,26 +56,26 @@ seasons = ['Spring', 'Summer', 'Autumn', 'Winter']
 
 def weather_answer(phrase, context_variables):
     city = ""
-    country = ""
-    for keyword in phrase.split():
-        if keyword in df_cities['city_name'].values:
-            city = keyword
+    while city == "":
+
+        for keyword in phrase.split():
+            if keyword in df_cities['city_name'].values:
+                city = keyword
+        if city == "":
+            phrase = input("Chatbot: Well... you either didn't specify a city or I was not blessed with the knowledge of the city you are looking for... Try again!\n\nMe: ")
+            print("\n")
     
-    if city != "":
-        get_weather_forecast(city, context_variables)
-        #print("Chatbot: Is that the city you live in by any chance?")
-        city_answer = input("Chatbot: Is that the city you live in by any chance?\n\nMe: ")
-        print("\n")
-        #print("Me: " + city_answer)
-        city_answer = city_answer.lower()
-        if positive_answer(city_answer):
-            context_variables['current_city'] = city
-            print("Chatbot: Great! I'll remember that for next time!")
-        else:
-            print("Chatbot: Oh, I see... I'll keep that in mind for next time!")
+    get_weather_forecast(city, context_variables)
+    #print("Chatbot: Is that the city you live in by any chance?")
+    city_answer = input("Chatbot: Is that the city you live in by any chance?\n\nMe: ")
+    print("\n")
+    #print("Me: " + city_answer)
+    city_answer = city_answer.lower()
+    if positive_answer(city_answer):
+        context_variables['current_city'] = city
+        print("Chatbot: Great! I'll remember that for next time!")
     else:
-        print("Chatbot: Well... you either didn't specify a city or I was not blessed with the knowledge of the city you are looking for...")
-        print("Chatbot: Take it easy on me... I'm just a simple bot after all...")
+        print("Chatbot: Oh, I see... I'll keep that in mind for next time!")
 
 
 def get_weather_forecast(city, context_variables):
@@ -97,26 +100,25 @@ def get_weather_forecast(city, context_variables):
         avg_temp = df_weather[df_weather['city_name'] == city]['avg_temp_c'].mean()
         print(f"Chatbot: Seems like you did not give me a specific season. The average yearly temperature in {city} is {avg_temp}.")
 
-    #print("Chatbot: Talking about seasons, do you have a favorite one?")
-    answer = input("Chatbot: Talking about seasons, do you have a favorite one?\n\nMe: ")
-    print("\n")
-    #print("Me: " + answer)
+    if context_variables['favourite_season'] == "":
+        answer = input("Chatbot: Talking about seasons, do you have a favorite one?\n\nMe: ")
+        print("\n")
 
-    season = ""
+        season = ""
 
-    for keyword in answer.split():
-        if keyword in seasons and keyword != "Spring":
-            print("Chatbot: Ohh, interesting choice! My favourite one is by far Spring! You get to see the flowers bloom and the birds chirp! It's magical! Smells nice too!")
-            context_variables['favourite_season'] = keyword
-            season = keyword
+        for keyword in answer.split():
+            if keyword in seasons and keyword != "Spring":
+                print("Chatbot: Ohh, interesting choice! My favourite one is by far Spring! You get to see the flowers bloom and the birds chirp! It's magical! Smells nice too!")
+                context_variables['favourite_season'] = keyword
+                season = keyword
 
-        elif keyword in seasons and keyword == "Spring":
-            print("Chatbot: Just like me! Spring is the best season, isn't it? The flowers, the birds, the sun... it's all so magical!")
-            context_variables['favourite_season'] = keyword
-            season = keyword
+            elif keyword in seasons and keyword == "Spring":
+                print("Chatbot: Just like me! Spring is the best season, isn't it? The flowers, the birds, the sun... it's all so magical!")
+                context_variables['favourite_season'] = keyword
+                season = keyword
 
-    if season == "":
-        print("Chatbot: I see... I guess you don't like seasons that much...")
+        if season == "":
+            print("Chatbot: I see... I guess you don't like seasons that much...")
 
 def weather_continue_conversation(context_variables):
     if context_variables['current_city'] == "":
@@ -144,14 +146,14 @@ def weather_continue_conversation(context_variables):
     
     if context_variables["favourite_city"] == "":
         #print("Chatbot: Do you have a favourite city?")
-        new_question = input("Chatbot: My favourite city in the world is Lisbon! Have you ever been there? Tell me about it!\n\nMe: ")
+        new_question = input("Chatbot: My favourite city in the world is Lisbon! Have you ever been there?\n\nMe: ")
         print("\n")
         #print("Me: " + new_question)
         new_question = new_question.lower()
         if positive_answer(new_question):
             #print("Chatbot: My favourite city in the world is Lisbon! Do you have a favourite city? Tell me about it!")
             print("Could not agree more! Lisbon is a beautiful city!")
-        phrase = input("Chatbot: My favourite city in the world is Lisbon! Do you have a favourite city? Tell me about it!\n\nMe: ")
+        phrase = input("Chatbot: Do you have a favourite city? Tell me about it!\n\nMe: ")
         print("\n")
         #print("Me: " + phrase)
         city = ""
@@ -161,16 +163,20 @@ def weather_continue_conversation(context_variables):
         if city != "": 
             print("Chatbot: So deep... I can feel the love you have for this city... I bet the weather is not as good as it is in Lisbon though... Let's check it out!")
             context_variables["favourite_city"] = city
-            get_weather_forecast(city)
+            get_weather_forecast(city, context_variables)
         else:
             print("Chatbot: I see... I guess I'll just go back to my corner then... You know I have feelings too, right?")
 
 def restaurant_answer(phrase, context_variables):
     cuisine = ""
-    for keyword in phrase.split():
-        if keyword in df_restaurants['Restaurant'].values:
-            cuisine = keyword
-        context_variables['favourite_cuisine'] = cuisine
+    while cuisine == "":
+        for keyword in phrase.split():
+            if keyword in df_restaurants['Restaurant'].values:
+                cuisine = keyword
+        if cuisine == "":
+            phrase = input("Chatbot: I'm sorry, I don't know any restaurants that serve that cuisine... Can you try other?\n\nMe: ")
+            print("\n")
+    context_variables['favourite_cuisine'] = cuisine
     if cuisine != "":
         find_restaurant(cuisine)
     else:
@@ -180,13 +186,13 @@ def find_restaurant(cuisine):
     restaurants = df_restaurants[df_restaurants['Restaurant'] == cuisine]
     if not restaurants.empty:
         # get all the cities and rating of restaurants serving the cuisine
-        print(f"I found {len(restaurants)} restaurants serving {cuisine} cuisine.")
+        print(f"Chatbot: I found {len(restaurants)} restaurants serving {cuisine} cuisine.")
         for city, rating in zip(restaurants['City'], restaurants['Rating']):
-            print(f"{cuisine} cuisine is served in {city} and it has a rating of {rating}.")
+            print(f"    {cuisine} cuisine is served in {city} and it has a rating of {rating}.")
     else:
-        print(f"I'm sorry, I couldn't find any restaurants serving {cuisine} cuisine.")
+        print(f"Chatbot: I'm sorry, I couldn't find any restaurants serving {cuisine} cuisine.")
 
-    print("Eventually, if I get to know you better I could recommend a restaurant for you...")
+    print("Chatbot: Eventually, if I get to know you better I could recommend a restaurant for you...")
 
 def restaurant_continue_conversation(context_variables):
     if context_variables["favourite_cuisine"] == "":
@@ -202,7 +208,7 @@ def restaurant_continue_conversation(context_variables):
                     restaurant = keyword
                     print(f"Chatbot: Great choice! I know plenty of {keyword} restaurants around the world!")
             if restaurant == "":
-                input("Chatbot: I'm sorry, I don't know any restaurants that serve that cuisine... Can you try other?\n\nMe: ")
+                phrase = input("Chatbot: I'm sorry, I don't know any restaurants that serve that cuisine... Can you try other?\n\nMe: ")
                 print("\n")
 
     if context_variables["current_city"] == "":
@@ -243,45 +249,44 @@ def restaurant_continue_conversation(context_variables):
 def transportation_answer(phrase, context_variables):
     city1 = ""
     city2 = ""
-    for keyword in phrase.split():
-        if keyword in df_cities['city'].values:
-            if city1 == "":
-                city1 = keyword
-            else:
-                city2 = keyword
-    if city1 != "" and city2 != "":
-        #print(f"Chatbot: So you want to travel from {city1} to {city2}?")
-        print("\n")
-        new_question = input(f"Chatbot: So you want to travel from {city1} to {city2}?\nMe: ")
+    while city1 == "" or city2 == "":
+        for keyword in phrase.split():
+            if keyword in df_cities['city_name'].values:
+                if city1 == "":
+                    city1 = keyword
+                else:
+                    city2 = keyword
+        if city1 == "" or city2 == "":
+            phrase = input("Chatbot: I'm sorry, you either did not mention your origin and destination or I don't know those cities... Can you try other?\n\nMe: ")
+            print("\n")
+    new_question = input(f"Chatbot: So you want to travel from {city1} to {city2}?\n\nMe: ")
+    print("\n")
+    #print("Me: " + new_question)
+    new_question = new_question.lower()
+    if positive_answer(new_question):
+        print(f"Chatbot:Alright, let me check the transportation schedule for you.")
+        check_flight_schedule(city1, city2)
+        context_variables["current_city"] = city1
+        #print(f"Chatbot: Just out of curiosity, what are you planning to do in {city2}? What's the occasion? A wedding hehe? I know! Must be your favourite city, right?")
+        new_question = input(f"Chatbot: Just out of curiosity, what are you planning to do in {city2}? What's the occasion? A wedding hehe? I know! Must be your favourite city, right?\n\nMe: ")
         print("\n")
         #print("Me: " + new_question)
         new_question = new_question.lower()
         if positive_answer(new_question):
-            print(f"Chatbot:Alright, let me check the transportation schedule for you.")
-            check_flight_schedule(city1, city2)
-            context_variables["current_city"] = city1
-            #print(f"Chatbot: Just out of curiosity, what are you planning to do in {city2}? What's the occasion? A wedding hehe? I know! Must be your favourite city, right?")
-            new_question = input(f"Chatbot: Just out of curiosity, what are you planning to do in {city2}? What's the occasion? A wedding hehe? I know! Must be your favourite city, right?\n\nMe: ")
-            print("\n")
-            #print("Me: " + new_question)
-            new_question = new_question.lower()
-            if positive_answer(new_question):
-                print("Chatbot: I knew it! I'm so good at this... I'm like a mind reader or something...")
-                context_variables["favourite_city"] = city2
-            else:
-                print("Chatbot: Oopsie... I guess I was wrong... And they say AI will take over the world...")
+            print("Chatbot: I knew it! I'm so good at this... I'm like a mind reader or something...")
+            context_variables["favourite_city"] = city2
         else:
-            print("Chatbot: I see... I guess I'll just go back to my corner then... I was just trying to be nice, okay?")
+            print("Chatbot: Oopsie... I guess I was wrong... And they say AI will take over the world...")
     else:
-        print("Chatbot: I'm sorry, I don't have an answer for that, you should specify a city, one that I know of preferably...")
+        print("Chatbot: I see... I guess I'll just go back to my corner then... I was just trying to be nice, okay?")
 
 
 def check_flight_schedule(city1, city2):
-    flights = df_flights[(df_flights['origin_city'] == city1) & (df_flights['destination_city'] == city2)]
+    flights = df_flights[(df_flights['Origin'] == city1) & (df_flights['Destination'] == city2)]
     if not flights.empty:
         print(f"I found {len(flights)} flights from {city1} to {city2}.")
-        for flight in flights:
-            print(f"Flight {flight['flight_number']} departs at {flight['departure_time']} and arrives at {flight['arrival_time']}.")
+        for i in range(len(flights)):
+            print(f"Flight Number: {flights.iloc[i]['FlightNumber']}, Departure at: {flights.iloc[i]['Departure']}")
     else:
         print(f"I'm sorry, I couldn't find any flights from {city1} to {city2}.")
 
@@ -342,34 +347,41 @@ def clear_context(context_variables):
 
 def ask_question(weather, restaurant, transportation, context_variables):
 
-    print("Chatbot: My turn! I have a question for you!")
+    print("Chatbot: Question! Question! Question! I have soooo many questions for you! Let's see...")
 
 
     if weather == False:
         if context_variables['current_city'] == "" or context_variables['favourite_city'] == "":
             weather_continue_conversation(context_variables)
         else:
-            pass #TODO yapp about random stuff without saving
+            q = input("Chatbot: Do you want to know the weather in your favourite city?\n\nMe: ")
+            print("\n")
+            if positive_answer(q):
+                get_weather_forecast(context_variables['favourite_city'], context_variables)
         weather = True
         return (weather, restaurant, transportation)
-
 
 
     elif restaurant == False:
         if context_variables['favourite_cuisine'] == "" or context_variables['current_city']:    
             restaurant_continue_conversation(context_variables)
         else:
-            pass #TODO yapp about random stuff without saving
+            q = input("Chatbot: Do you want to know a restaurant that serves your favourite cuisine?\n\nMe: ")
+            print("\n")
+            if positive_answer(q):
+                find_restaurant(context_variables['favourite_cuisine'])
         restaurant = True
         return (weather, restaurant, transportation)
-
 
 
     elif transportation == False:
         if context_variables['current_city'] == "" or context_variables['favourite_city'] == "":
             transportation_continue_conversation(context_variables)
         else:
-            pass #TODO yapp about random stuff without saving
+            q = input("Chatbot: Do you want to know the transportation schedule from your city to your favourite city?\n\nMe: ")
+            print("\n")
+            if positive_answer(q):
+                check_flight_schedule(context_variables['current_city'], context_variables['favourite_city'])
         transportation = True
         return (weather, restaurant, transportation)
         
@@ -387,22 +399,26 @@ def process_context(phrase, context_variables):
 
         if phrase == "exit":
             print("Chatbot: Goodbye! I hope I was able to help you today!")
+            phrase = ""
             break
         elif phrase != "":
             context = search_keywords(phrase)
             if context == "weather":
                 weather_answer(phrase, context_variables)
                 weather = True
+                phrase = ""
             elif context == "restaurant":
                 restaurant_answer(phrase, context_variables)
                 restaurant = True
+                phrase = ""
             elif context == "transportation":
                 transportation_answer(phrase, context_variables)
                 transportation = True
+                phrase = ""
             else:
-                print("Chatbot: Yikes! I'm afraid I am not as smart as you think I am... I'm not sure what you are asking for...")
+                phrase = input("Chatbot: Yikes! I'm afraid I am not as smart as you think I am... I'm not sure what you are asking for... Try again!\n\nMe: ")
+                print("\n")
 
-        phrase = ""
         weather, restaurant, transportation = ask_question(weather, restaurant, transportation, context_variables)
 
 
@@ -426,7 +442,7 @@ def make_plan(context_variables):
         else:
             print("Chatbot: I'm sorry, I couldn't find a restaurant that serves your favourite cuisine in your favourite city... But you can still go there and enjoy a meal!")
             meal = df_restaurants[df_restaurants['City'] == context_variables['favourite_city']].iloc[0]
-            print(f"Chatbot: I found a restaurant in your favourite city! It's called {meal['Restaurant']} and is located at {meal['Street']}!")
+            print(f"Chatbot: I found a restaurant in your favourite city! It serves {meal['Restaurant']} food and is located at {meal['Street']}!")
     else:
         print("Chatbot: You know, I'm not sure I can make a plan for you... I'm not sure I know you well enough...")
 
