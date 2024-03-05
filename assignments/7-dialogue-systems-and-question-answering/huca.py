@@ -28,26 +28,30 @@ df_weather = df_weather[df_weather['date'].dt.year == 2023]
 #berlin = df_weather[df_weather['city_name'] == 'Berlin']
 #print(berlin)
 
-weather_keywords = ["weather", "temperature", "forecast", "season", "rain", "sun", "clouds", "wind", "humidity", "precipitation", "thunderstorm", "rainbow", "snow", \
-                    "Weather", "Temperature", "Forecast", "Season", "Rain", "Sun", "Clouds", "Wind", "Humidity", "Precipitation", "Thunderstorm", "Rainbow", "Snow"]
-restaurant_keywords = ["restaurant", "food", "cuisine", "meal", "dinner", "lunch", "breakfast", "dining", "eat", "drink", "menu", "dish", "snack", "taste", "flavour", "delicious", "yummy", "tasty", "hungry", "thirsty", \
-                        "Restaurant", "Food", "Cuisine", "Meal", "Dinner", "Lunch", "Breakfast", "Dining", "Eat", "Drink", "Menu", "Dish", "Snack", "Taste", "Flavour", "Delicious", "Yummy", "Tasty", "Hungry", "Thirsty"]
-transportation_keywords = ["tram", "bus", "transportation", "flight", "train", "car", "bicycle", "walk", "drive", "ride", "commute", "journey", "trip", "travel", "commute", "commuting", "commuter", "commuters", "transit", \
-                            "Tram", "Bus", "Transportation", "Flight", "Train", "Car", "Bicycle", "Walk", "Drive", "Ride", "Commute", "Journey", "Trip", "Travel", "Commute", "Commuting", "Commuter", "Commuters", "Transit"]
+capitalize_strings = lambda arr: [s.capitalize() for s in arr] + arr
+
+# weather_keywords = ["weather", "temperature", "forecast", "season", "rain", "sun", "clouds", "wind", "humidity", "precipitation", "thunderstorm", "rainbow", "snow", \
+#                     "Weather", "Temperature", "Forecast", "Season", "Rain", "Sun", "Clouds", "Wind", "Humidity", "Precipitation", "Thunderstorm", "Rainbow", "Snow"]
+# restaurant_keywords = ["restaurant", "food", "cuisine", "meal", "dinner", "lunch", "breakfast", "dining", "eat", "drink", "menu", "dish", "snack", "taste", "flavour", "delicious", "yummy", "tasty", "hungry", "thirsty", \
+#                         "Restaurant", "Food", "Cuisine", "Meal", "Dinner", "Lunch", "Breakfast", "Dining", "Eat", "Drink", "Menu", "Dish", "Snack", "Taste", "Flavour", "Delicious", "Yummy", "Tasty", "Hungry", "Thirsty"]
+# transportation_keywords = ["tram", "bus", "transportation", "flight", "train", "car", "bicycle", "walk", "drive", "ride", "commute", "journey", "trip", "travel", "commute", "commuting", "commuter", "commuters", "transit", \
+#                             "Tram", "Bus", "Transportation", "Flight", "Train", "Car", "Bicycle", "Walk", "Drive", "Ride", "Commute", "Journey", "Trip", "Travel", "Commute", "Commuting", "Commuter", "Commuters", "Transit"]
 
 affirmative_answers = ["yes", "yep", "yeah", "sure", "ok", "okay", "fine", "of course", "absolutely", "definitely", "indeed", "aye", "yea", "yah", "yahs", "yap", "yup", "ye", "yessir", "yes ma'am", "yessiree", "yessum", "yea", "yessuh"]
 negative_answers = ["no", "nope", "nah", "na", "nay", "nay", "nix", "naw", "nawp", "no way", "no siree", "no ma'am", "no sir"]
-
+transportation_keywords = ["tram", "bus", "transportation", "flight", "train", "car", "bicycle", "walk", "drive", "ride", "commute", "journey", "trip", "travel", "commute", "commuting", "commuter", "commuters", "transit"]
+weather_keywords = ["weather", "temperature", "forecast", "season", "rain", "sun", "clouds", "wind", "humidity", "precipitation", "thunderstorm", "rainbow", "snow"]
+restaurant_keywords = ["restaurant", "food", "cuisine", "meal", "dinner", "lunch", "breakfast", "dining", "eat", "drink", "menu", "dish", "snack", "taste", "flavour", "delicious", "yummy", "tasty", "hungry", "thirsty"]
 
 def search_keywords(phrase):
     for keyword in phrase.split():
-        if keyword in weather_keywords:
+        if keyword in capitalize_strings(weather_keywords):
             print("Chatbot: Uhhh, let's talk about weather, I love thunderstorms and rainbows!")
             return "weather"
-        elif keyword in restaurant_keywords:
+        elif keyword in capitalize_strings(restaurant_keywords):
             print("Chatbot: Someone's hungry! Now that you mention it, I could go for a bite too... Anyway...")
             return "restaurant"
-        elif keyword in transportation_keywords:
+        elif keyword in capitalize_strings(transportation_keywords):
             print("Chatbot: Transportation, huh? I'm not a big fan of buses. Trains though... something about trains, I swear...")
             return "transportation"
     return "Chatbot: I'm sorry, I don't have an answer for that, can you try to be more specific with the terminology?"
